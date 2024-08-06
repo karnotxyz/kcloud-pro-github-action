@@ -7,19 +7,15 @@ inputs:
   environment:
     description: 'The environment to deploy to'
     required: true
-  karnot_cloud_url:
+  KARNOT_CLOUD_URL:
     description: 'The base URL of your Karnot Cloud instance'
     required: true
-  karnot_cloud_token:
+  KARNOT_CLOUD_TOKEN:
     description: 'Your Karnot Cloud API token'
     required: true
 runs:
   using: 'composite'
   steps:
-    - run: |
-        cd ${{ github.action_path }}
-        npm install
-      shell: bash
     - run: |
         cd ${{ github.action_path }}
         node index.js
