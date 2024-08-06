@@ -31,8 +31,8 @@ This GitHub Action streamlines deploying your applications to Karnot Cloud Pro.
           required: true
           type: choice
           options:
-            - kakarot-sepolia
-            - kakarot-staging
+            - org-sepolia
+            - org-staging
 
    jobs:
      deploy:
