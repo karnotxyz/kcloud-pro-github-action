@@ -31,7 +31,7 @@ async function checkProjectExists(projectId) {
         const response = await client.get(url);
         if (response.message.statusCode === 200) {
             const resp = JSON.parse(await response.readBody()).data;
-            core.info(`project: ${resp.name}, organization: ${resp.organization}, stack: ${resp.stack}`);
+            core.info(`project: ${resp.name}, organization: ${resp.organization_name}, stack: ${resp.stack}`);
             return true;
         }
     } catch (error) {
@@ -56,7 +56,7 @@ async function updateConfig(projectId, serviceName, config) {
     const client = getHttpClient();
     const url = `${KARNOT_CLOUD_URL}/project/deployment/config`;
     try {
-        const response = await client.postJson(url, { config, projectId, serviceName });
+        const response = await client.postJson(url, { config, projectId, serviceName, async: false });
         return response.statusCode === 200;
     } catch (error) {
         core.error(`Error updating config: ${error.message}`);
