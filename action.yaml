@@ -16,7 +16,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - run: npm install
+    - run: |
+        cd ${{ github.action_path }}
+        npm install
       shell: bash
-    - run: node index.js
+    - run: |
+        cd ${{ github.action_path }}
+        node index.js
       shell: bash
