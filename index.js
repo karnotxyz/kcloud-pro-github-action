@@ -3,8 +3,13 @@ const { HttpClient } = require('@actions/http-client');
 const yaml = require('js-yaml');
 const fs = require('fs').promises;
 
-const KARNOT_CLOUD_URL = core.getInput('KARNOT_CLOUD_URL', { required: true }) || 'https://karnot.xyz';
-const KARNOT_CLOUD_TOKEN = core.getInput('KARNOT_CLOUD_TOKEN', { required: true }) || '';
+const KARNOT_CLOUD_URL = process.env.KARNOT_CLOUD_URL;
+const KARNOT_CLOUD_TOKEN = process.env.KARNOT_CLOUD_TOKEN;
+
+if (!KARNOT_CLOUD_URL || !KARNOT_CLOUD_TOKEN) {
+    core.setFailed('KARNOT_CLOUD_URL and KARNOT_CLOUD_TOKEN must be set');
+    process.exit(1);
+}
 
 core.info(`Karnot Cloud URL: ${KARNOT_CLOUD_URL}`);
 
@@ -99,8 +104,8 @@ async function yamlToDict(yamlFile) {
 
 async function main() {
     try {
-        const inputFile = core.getInput('input_file', { required: true });
-        const environment = core.getInput('environment', { required: true });
+        const inputFile = process.env.INPUT_FILE;
+        const environment = process.env.ENVIRONMENT;
 
         core.info(`Reading file: ${inputFile}`);
         const data = await yamlToDict(inputFile);

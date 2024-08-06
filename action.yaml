@@ -1,22 +1,26 @@
-name: 'Karnot Cloud Pro Action'
-description: 'Deploy to karnot cloud using a YAML configuration'
+name: 'Karnot Cloud Pro'
+description: 'Deployment CI for Karnot Cloud'
 inputs:
   input_file:
-    description: 'Path to the YAML configuration file'
+    description: 'Path to the deployment file'
     required: true
   environment:
-    description: 'The environment to deploy to'
+    description: 'Environment to deploy'
     required: true
   KARNOT_CLOUD_URL:
-    description: 'The base URL of your Karnot Cloud instance'
+    description: 'Karnot Cloud URL'
     required: true
   KARNOT_CLOUD_TOKEN:
-    description: 'Your Karnot Cloud API token'
+    description: 'Karnot Cloud Token'
     required: true
 runs:
   using: 'composite'
   steps:
     - run: |
-        cd ${{ github.action_path }}
-        node index.js
+        node ${{ github.action_path }}/index.js
       shell: bash
+      env:
+        INPUT_FILE: ${{ inputs.input_file }}
+        ENVIRONMENT: ${{ inputs.environment }}
+        KARNOT_CLOUD_URL: ${{ inputs.KARNOT_CLOUD_URL }}
+        KARNOT_CLOUD_TOKEN: ${{ inputs.KARNOT_CLOUD_TOKEN }}
