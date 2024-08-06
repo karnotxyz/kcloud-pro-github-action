@@ -14,7 +14,8 @@ This GitHub Action streamlines deploying your applications to Karnot Cloud Pro.
 1. **Get Your Karnot Access:**
     * Get your creds from Karnot Team.
     * Store these credentials as GitHub Secrets in your repository:
-        * `KARNOT_API_KEY` (or `KARNOT_ACCESS_TOKEN`)
+        * `KARNOT_CLOUD_URL`
+        * `KARNOT_CLOUD_TOKEN`
 
 2. **Add the Workflow:**
     * Create a new workflow file in your repository (e.g., `.workflows/karnot-deploy.yaml`).
