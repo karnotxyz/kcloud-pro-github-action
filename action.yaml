@@ -14,5 +14,9 @@ inputs:
     description: 'Your Karnot Cloud API token'
     required: true
 runs:
-  using: 'node16'
-  main: 'index.js'
+  using: 'composite'
+  steps:
+    - run: npm install
+      shell: bash
+    - run: node index.js
+      shell: bash
