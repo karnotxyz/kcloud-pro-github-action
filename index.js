@@ -31,7 +31,8 @@ async function checkProjectExists(projectId) {
         const response = await client.get(url);
         if (response.message.statusCode === 200) {
             const resp = JSON.parse(await response.readBody()).data;
-            core.info(`project: ${resp.name}, organization: ${resp.organization_name}, stack: ${resp.stack}`);
+            core.debug(`Project data: ${JSON.stringify(resp)}`);
+            core.info(`project: ${resp.name}, organization: ${resp.organisation_name}, stack: ${resp.stack}`);
             return true;
         }
     } catch (error) {
@@ -44,7 +45,10 @@ async function updateImage(projectId, serviceName, image) {
     const client = getHttpClient();
     const url = `${KARNOT_CLOUD_URL}/project/deployment/image`;
     try {
-        const response = await client.postJson(url, { image, projectId, serviceName, async: false });
+        const data = {image, projectId, serviceName, async: false};
+        core.debug(`Updating image: Request- ${JSON.stringify(data)}`);
+        const response = await client.postJson(url, data);
+        core.debug(`Updating image: Response- ${response}`);
         return response.statusCode === 200;
     } catch (error) {
         core.error(`Error updating image: ${error.message}`);
@@ -56,7 +60,10 @@ async function updateConfig(projectId, serviceName, config) {
     const client = getHttpClient();
     const url = `${KARNOT_CLOUD_URL}/project/deployment/config`;
     try {
+        const data = {config, projectId, serviceName};
+        core.debug(`Updating config: Request- ${JSON.stringify(data)}`);
         const response = await client.postJson(url, { config, projectId, serviceName, async: false });
+        core.debug(`Updating config: Response- ${response.result}`);
         return response.statusCode === 200;
     } catch (error) {
         core.error(`Error updating config: ${error.message}`);
