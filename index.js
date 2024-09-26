@@ -48,7 +48,7 @@ async function updateImage(projectId, serviceName, image) {
         const data = {image, projectId, serviceName, async: false};
         core.debug(`Updating image: Request- ${JSON.stringify(data)}`);
         const response = await client.postJson(url, data);
-        core.debug(`Updating image: Response- ${response}`);
+        core.debug(`Updating image: Response- ${JSON.stringify(response.result)}`);
         return response.statusCode === 200;
     } catch (error) {
         core.error(`Error updating image: ${error.message}`);
@@ -58,12 +58,14 @@ async function updateImage(projectId, serviceName, image) {
 
 async function updateConfig(projectId, serviceName, config) {
     const client = getHttpClient();
+    setTimeout(() => {
+    }, 1000);
     const url = `${KARNOT_CLOUD_URL}/project/deployment/config`;
     try {
         const data = {config, projectId, serviceName};
         core.debug(`Updating config: Request- ${JSON.stringify(data)}`);
         const response = await client.postJson(url, { config, projectId, serviceName, async: false });
-        core.debug(`Updating config: Response- ${response.result}`);
+        core.debug(`Updating config: Response- ${JSON.stringify(response.result)}`);
         return response.statusCode === 200;
     } catch (error) {
         core.error(`Error updating config: ${error.message}`);
