@@ -56,6 +56,28 @@ async function updateImage(projectId, serviceName, image) {
     }
 }
 
+async function updateFiles(projectId, serviceName, serviceFile) {
+    const client = getHttpClient();
+    const url = `${KARNOT_CLOUD_URL}/project/deployment/chain-forge`;
+    let allFilesUpdated = true;
+    for (const [file, content] of Object.entries(serviceFile)) {
+        try {
+            core.info(`Uploading ${file} file`);
+            const data = {url: content, projectId, serviceName, async: false};
+            core.debug(`Updating files: Request- ${JSON.stringify(data)}`);
+            const response = await client.postJson(url, data);
+            core.debug(`Updating files: Response- ${JSON.stringify(response.result)}`);
+            if (response.statusCode !== 200) {
+                allFilesUpdated = false;
+            }
+        } catch (error) {
+            core.error(`Error updating files: ${error.message}`);
+            allFilesUpdated = false;
+        }
+    }
+    return allFilesUpdated;
+}
+
 async function updateConfig(projectId, serviceName, config) {
     const client = getHttpClient();
     setTimeout(() => {
@@ -90,7 +112,12 @@ async function deployPipeline(data, environment) {
                 core.info(`Service name: ${service}`);
                 const serviceImage = serviceData.image;
                 const serviceConfig = serviceData.config;
+                const serviceFiles = serviceData.files;
                 core.info(`Deploying pipeline for service: ${service} with image: ${serviceImage} and config: ${serviceConfig}`);
+                if (serviceFiles) {
+                    if (!(await updateFiles(projectId, service, serviceFiles))) {
+                        core.error(`Failed to update files for service: ${service}`);
+                }
                 if (serviceImage) {
                     if (!(await updateImage(projectId, service, serviceImage))) {
                         core.error(`Failed to update image for service: ${service}`);
