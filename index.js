@@ -75,6 +75,7 @@ async function updateFiles(projectId, serviceName, serviceFile) {
             allFilesUpdated = false;
         }
     }
+    return allFilesUpdated
 }
 
 async function updateConfig(projectId, serviceName, config) {
