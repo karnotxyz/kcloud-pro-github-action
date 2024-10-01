@@ -75,7 +75,6 @@ async function updateFiles(projectId, serviceName, serviceFile) {
             allFilesUpdated = false;
         }
     }
-    return allFilesUpdated;
 }
 
 async function updateConfig(projectId, serviceName, config) {
@@ -117,6 +116,7 @@ async function deployPipeline(data, environment) {
                 if (serviceFiles) {
                     if (!(await updateFiles(projectId, service, serviceFiles))) {
                         core.error(`Failed to update files for service: ${service}`);
+                    }
                 }
                 if (serviceImage) {
                     if (!(await updateImage(projectId, service, serviceImage))) {
