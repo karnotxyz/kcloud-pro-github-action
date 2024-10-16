@@ -124,6 +124,8 @@ async function deployPipeline(data, environment) {
                         core.error(`Failed to update image for service: ${service}`);
                     }
                 }
+                // wait for 15 seconds before sending a new request to the api
+                await new Promise(resolve => setTimeout(resolve, 15e3));
                 if (serviceConfig) {
                     if (!(await updateConfig(projectId, service, serviceConfig))) {
                         core.error(`Failed to update config for service: ${service}`);
