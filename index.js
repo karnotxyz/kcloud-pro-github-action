@@ -151,6 +151,11 @@ async function main() {
         core.debug(`File contents: ${JSON.stringify(data)}`);
         core.info(`Environment: ${environment}`);
 
+        if (!data.environments.map(v => v.project).includes(environment)) {
+            core.error(`Environment ${environment} does not exist in config file`);
+            throw new Error(`Environment ${environment} does not exist in config file`);
+        }
+
         await deployPipeline(data, environment);
     } catch (error) {
         core.setFailed(error.message);
