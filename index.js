@@ -45,6 +45,7 @@ async function updateImage(projectId, serviceName, image) {
     const client = getHttpClient();
     const url = `${KARNOT_CLOUD_URL}/project/deployment/image`;
     try {
+        core.info(`Updating image to ${image} for ${serviceName} of project ${projectId}`);
         const data = {image, projectId, serviceName, async: false};
         core.debug(`Updating image: Request- ${JSON.stringify(data)}`);
         const response = await client.postJson(url, data);
@@ -62,7 +63,7 @@ async function updateFiles(projectId, serviceName, serviceFile) {
     let allFilesUpdated = true;
     for (const [file, content] of Object.entries(serviceFile)) {
         try {
-            core.info(`Uploading ${file} file`);
+            core.info(`Uploading file ${file} for ${serviceName} of project ${projectId}`);
             const data = {url: content, projectId, serviceName, async: false};
             core.debug(`Updating files: Request- ${JSON.stringify(data)}`);
             const response = await client.postJson(url, data);
@@ -84,6 +85,7 @@ async function updateConfig(projectId, serviceName, config) {
     }, 1000);
     const url = `${KARNOT_CLOUD_URL}/project/deployment/config`;
     try {
+        core.info(`Updating config for ${serviceName} of project ${projectId}`);
         const data = {config, projectId, serviceName};
         core.debug(`Updating config: Request- ${JSON.stringify(data)}`);
         const response = await client.postJson(url, { config, projectId, serviceName, async: false });
@@ -113,22 +115,28 @@ async function deployPipeline(data, environment) {
                 const serviceImage = serviceData.image;
                 const serviceConfig = serviceData.config;
                 const serviceFiles = serviceData.files;
-                core.info(`Deploying pipeline for service: ${service} with image: ${serviceImage} and config: ${serviceConfig}`);
+                core.info(`Deploying pipeline for service: ${service} with image: ${serviceImage} and config: ${JSON.stringify(serviceConfig)}`);
                 if (serviceFiles) {
                     if (!(await updateFiles(projectId, service, serviceFiles))) {
-                        core.error(`Failed to update files for service: ${service}`);
+                        const errorMessage = `Failed to update files for service: ${service}`
+                        core.error(errorMessage);
+                        throw new Error(errorMessage);
                     }
                 }
                 if (serviceImage) {
                     if (!(await updateImage(projectId, service, serviceImage))) {
-                        core.error(`Failed to update image for service: ${service}`);
+                        const errorMessage = `Failed to update image for service: ${service}`;
+                        core.error(errorMessage);
+                        throw new Error(errorMessage);
                     }
                 }
                 // wait for 15 seconds before sending a new request to the api
                 await new Promise(resolve => setTimeout(resolve, 15e3));
                 if (serviceConfig) {
                     if (!(await updateConfig(projectId, service, serviceConfig))) {
-                        core.error(`Failed to update config for service: ${service}`);
+                        const errorMessage = `Failed to update config for service: ${service}`;
+                        core.error(errorMessage);
+                        throw new Error(errorMessage);
                     }
                 }
             }
@@ -158,7 +166,7 @@ async function main() {
 
         await deployPipeline(data, environment);
     } catch (error) {
-        core.setFailed(error.message);
+        return core.setFailed(error.message);
     }
 }
 
