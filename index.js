@@ -99,7 +99,6 @@ async function updateConfig(projectId, serviceName, config) {
 
 async function deployPipeline(data, environment) {
     core.info(`Deploying pipeline for environment: ${environment}`);
-    const errorMessages = [];
     for (const project of data.environments) {
         const projectName = project.project;
         if (projectName === environment) {
@@ -121,14 +120,14 @@ async function deployPipeline(data, environment) {
                     if (!(await updateFiles(projectId, service, serviceFiles))) {
                         const errorMessage = `Failed to update files for service: ${service}`
                         core.error(errorMessage);
-                        errorMessages.push(errorMessage);
+                        throw new Error(errorMessage);
                     }
                 }
                 if (serviceImage) {
                     if (!(await updateImage(projectId, service, serviceImage))) {
                         const errorMessage = `Failed to update image for service: ${service}`;
                         core.error(errorMessage);
-                        errorMessages.push(errorMessage);
+                        throw new Error(errorMessage);
                     }
                 }
                 // wait for 15 seconds before sending a new request to the api
@@ -137,14 +136,11 @@ async function deployPipeline(data, environment) {
                     if (!(await updateConfig(projectId, service, serviceConfig))) {
                         const errorMessage = `Failed to update config for service: ${service}`;
                         core.error(errorMessage);
-                        errorMessages.push(errorMessage);
+                        throw new Error(errorMessage);
                     }
                 }
             }
         }
-    }
-    if (errorMessages.length > 0) {
-        throw new Error(JSON.stringify(errorMessages));
     }
 }
 
