@@ -123,18 +123,18 @@ async function deployPipeline(data, environment) {
                         throw new Error(errorMessage);
                     }
                 }
-                if (serviceImage) {
-                    if (!(await updateImage(projectId, service, serviceImage))) {
-                        const errorMessage = `Failed to update image for service: ${service}`;
+                if (serviceConfig) {
+                    if (!(await updateConfig(projectId, service, serviceConfig))) {
+                        const errorMessage = `Failed to update config for service: ${service}`;
                         core.error(errorMessage);
                         throw new Error(errorMessage);
                     }
                 }
                 // wait for 15 seconds before sending a new request to the api
                 await new Promise(resolve => setTimeout(resolve, 15e3));
-                if (serviceConfig) {
-                    if (!(await updateConfig(projectId, service, serviceConfig))) {
-                        const errorMessage = `Failed to update config for service: ${service}`;
+                if (serviceImage) {
+                    if (!(await updateImage(projectId, service, serviceImage))) {
+                        const errorMessage = `Failed to update image for service: ${service}`;
                         core.error(errorMessage);
                         throw new Error(errorMessage);
                     }
