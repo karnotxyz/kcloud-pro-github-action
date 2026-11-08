@@ -1,0 +1,8 @@
+version: 3
+projects:
+  - name: atlantis-poc
+    dir: poc
+    workspace: "poc;id;false;#"
+    autoplan:
+      enabled: true
+      when_modified: ["*"]
